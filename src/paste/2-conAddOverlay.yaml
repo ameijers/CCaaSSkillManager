@@ -1,0 +1,302 @@
+- conAddOverlay:
+    Control: GroupContainer@1.3.0
+    Variant: ManualLayout
+    Properties:
+      Visible: =varShowAddPanel
+      X: =0
+      Y: =0
+      Width: =Parent.Width
+      Height: =Parent.Height
+      Fill: =RGBA(0, 0, 0, 0.4)
+      DropShadow: =DropShadow.None
+    Children:
+      - conAddDialog:
+          Control: GroupContainer@1.3.0
+          Variant: AutoLayout
+          Properties:
+            X: =(Parent.Width - Self.Width) / 2
+            Y: =(Parent.Height - Self.Height) / 2
+            Width: =Min(480, Parent.Width - 32)
+            Height: =404
+            Fill: =RGBA(255, 255, 255, 1)
+            BorderThickness: =0
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            DropShadow: =DropShadow.Bold
+            LayoutDirection: =LayoutDirection.Vertical
+            LayoutAlignItems: =LayoutAlignItems.Stretch
+            LayoutGap: =4
+            PaddingTop: =24
+            PaddingBottom: =24
+            PaddingLeft: =24
+            PaddingRight: =24
+          Children:
+            - lblAddTitle:
+                Control: Label@2.5.1
+                Properties:
+                  Text: ="Add skill to " & varSelectedResource.Name
+                  Wrap: =false
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Size: =15
+                  Height: =40
+                  PaddingLeft: =0
+                  Color: =RGBA(36, 36, 36, 1)
+            - lblAddSkill:
+                Control: Label@2.5.1
+                Properties:
+                  Text: ="Skill"
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Size: =10.5
+                  Height: =28
+                  PaddingLeft: =0
+                  VerticalAlign: =VerticalAlign.Bottom
+                  Color: =RGBA(36, 36, 36, 1)
+            - cmbAddSkill:
+                Control: Classic/ComboBox@2.4.0
+                Properties:
+                  Items: |-
+                    =Sort(
+                        Filter(Characteristics, Status = 'Status (Characteristics)'.Active),
+                        Name,
+                        SortOrder.Ascending
+                    )
+                  DisplayFields: =["name"]
+                  SearchFields: =["name"]
+                  SelectMultiple: =false
+                  IsSearchable: =true
+                  InputTextPlaceholder: ="Select an option"
+                  AccessibleLabel: ="Skill"
+                  Font: =Font.'Segoe UI'
+                  Size: =10.5
+                  Height: =32
+                  Color: =RGBA(36, 36, 36, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  BorderColor: =RGBA(209, 209, 209, 1)
+                  BorderThickness: =1
+                  HoverBorderColor: =RGBA(199, 199, 199, 1)
+                  HoverFill: =RGBA(255, 255, 255, 1)
+                  FocusedBorderColor: =RGBA(15, 108, 189, 1)
+                  FocusedBorderThickness: =1
+                  ChevronBackground: =RGBA(255, 255, 255, 1)
+                  ChevronFill: =RGBA(97, 97, 97, 1)
+                  ChevronHoverBackground: =RGBA(245, 245, 245, 1)
+                  ChevronHoverFill: =RGBA(36, 36, 36, 1)
+                  SelectionFill: =RGBA(245, 245, 245, 1)
+                  SelectionColor: =RGBA(36, 36, 36, 1)
+                  SelectionTagFill: =RGBA(255, 255, 255, 1)
+                  SelectionTagColor: =RGBA(36, 36, 36, 1)
+                  OnChange: |-
+                    =With(
+                        {
+                            existing: First(
+                                Filter(
+                                    FirstN(
+                                        Filter(
+                                            'Bookable Resource Characteristics',
+                                            Characteristic.Characteristic = Self.Selected.Characteristic
+                                        ),
+                                        500
+                                    ),
+                                    !IsBlank('Rating Value')
+                                )
+                            )
+                        },
+                        Set(
+                            varSkillRatingModelId,
+                            existing.'Rating Value'.'Rating Model'.'Rating Model'
+                        )
+                    );
+                    Reset(cmbAddProficiency)
+            - lblAddRatingModel:
+                Control: Label@2.5.1
+                Properties:
+                  Text: ="Rating model"
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Size: =10.5
+                  Height: =28
+                  PaddingLeft: =0
+                  VerticalAlign: =VerticalAlign.Bottom
+                  Color: =RGBA(36, 36, 36, 1)
+            - cmbAddRatingModel:
+                Control: Classic/ComboBox@2.4.0
+                Properties:
+                  Items: =Sort('Rating Models', Name, SortOrder.Ascending)
+                  DisplayFields: =["name"]
+                  SearchFields: =["name"]
+                  SelectMultiple: =false
+                  IsSearchable: =false
+                  InputTextPlaceholder: ="Select an option"
+                  DefaultSelectedItems: |-
+                    =Filter(
+                        FirstN(Sort('Rating Models', Name, SortOrder.Ascending), 500),
+                        'Rating Model' = Coalesce(varSkillRatingModelId, varRatingModel.'Rating Model')
+                    )
+                  AccessibleLabel: ="Rating model"
+                  Font: =Font.'Segoe UI'
+                  Size: =10.5
+                  Height: =32
+                  Color: =RGBA(36, 36, 36, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  BorderColor: =RGBA(209, 209, 209, 1)
+                  BorderThickness: =1
+                  HoverBorderColor: =RGBA(199, 199, 199, 1)
+                  HoverFill: =RGBA(255, 255, 255, 1)
+                  FocusedBorderColor: =RGBA(15, 108, 189, 1)
+                  FocusedBorderThickness: =1
+                  ChevronBackground: =RGBA(255, 255, 255, 1)
+                  ChevronFill: =RGBA(97, 97, 97, 1)
+                  ChevronHoverBackground: =RGBA(245, 245, 245, 1)
+                  ChevronHoverFill: =RGBA(36, 36, 36, 1)
+                  SelectionFill: =RGBA(245, 245, 245, 1)
+                  SelectionColor: =RGBA(36, 36, 36, 1)
+                  SelectionTagFill: =RGBA(255, 255, 255, 1)
+                  SelectionTagColor: =RGBA(36, 36, 36, 1)
+                  OnChange: =Reset(cmbAddProficiency)
+            - lblRatingModelHint:
+                Control: Label@2.5.1
+                Properties:
+                  Text: |-
+                    =If(
+                        IsBlank(cmbAddSkill.Selected), "",
+                        !IsBlank(varSkillRatingModelId), "Default from other agents with this skill. Change only if you're sure: routing rules depend on it.",
+                        "No other agent has this skill yet. Pick the rating model your routing rules use."
+                    )
+                  Font: =Font.'Segoe UI'
+                  Size: =9
+                  Height: =34
+                  PaddingLeft: =0
+                  VerticalAlign: =VerticalAlign.Top
+                  Color: =RGBA(97, 97, 97, 1)
+            - lblAddProficiency:
+                Control: Label@2.5.1
+                Properties:
+                  Text: ="Proficiency"
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Size: =10.5
+                  Height: =24
+                  PaddingLeft: =0
+                  VerticalAlign: =VerticalAlign.Bottom
+                  Color: =RGBA(36, 36, 36, 1)
+            - cmbAddProficiency:
+                Control: Classic/ComboBox@2.4.0
+                Properties:
+                  Items: |-
+                    =Sort(
+                        Filter('Rating Values', 'Rating Model'.'Rating Model' = cmbAddRatingModel.Selected.'Rating Model'),
+                        'Value',
+                        SortOrder.Ascending
+                    )
+                  DisplayFields: =["name"]
+                  SearchFields: =["name"]
+                  SelectMultiple: =false
+                  IsSearchable: =false
+                  InputTextPlaceholder: ="Select an option"
+                  AccessibleLabel: ="Proficiency"
+                  Font: =Font.'Segoe UI'
+                  Size: =10.5
+                  Height: =32
+                  Color: =RGBA(36, 36, 36, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
+                  BorderColor: =RGBA(209, 209, 209, 1)
+                  BorderThickness: =1
+                  HoverBorderColor: =RGBA(199, 199, 199, 1)
+                  HoverFill: =RGBA(255, 255, 255, 1)
+                  FocusedBorderColor: =RGBA(15, 108, 189, 1)
+                  FocusedBorderThickness: =1
+                  ChevronBackground: =RGBA(255, 255, 255, 1)
+                  ChevronFill: =RGBA(97, 97, 97, 1)
+                  ChevronHoverBackground: =RGBA(245, 245, 245, 1)
+                  ChevronHoverFill: =RGBA(36, 36, 36, 1)
+                  SelectionFill: =RGBA(245, 245, 245, 1)
+                  SelectionColor: =RGBA(36, 36, 36, 1)
+                  SelectionTagFill: =RGBA(255, 255, 255, 1)
+                  SelectionTagColor: =RGBA(36, 36, 36, 1)
+            - conAddButtons:
+                Control: GroupContainer@1.3.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  LayoutMinHeight: =40
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutJustifyContent: =LayoutJustifyContent.End
+                  LayoutAlignItems: =LayoutAlignItems.End
+                  LayoutGap: =8
+                  FillPortions: =1
+                Children:
+                  - btnAddConfirm:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        Text: ="Add"
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Size: =10.5
+                        Width: =96
+                        Height: =32
+                        Fill: =RGBA(15, 108, 189, 1)
+                        Color: =RGBA(255, 255, 255, 1)
+                        HoverFill: =RGBA(17, 94, 163, 1)
+                        HoverColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(12, 59, 94, 1)
+                        DisabledFill: =RGBA(240, 240, 240, 1)
+                        DisabledColor: =RGBA(189, 189, 189, 1)
+                        DisabledBorderColor: =RGBA(224, 224, 224, 1)
+                        BorderThickness: =0
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        DisplayMode: =If(IsBlank(cmbAddSkill.Selected) || IsBlank(cmbAddProficiency.Selected), DisplayMode.Disabled, DisplayMode.Edit)
+                        OnSelect: |-
+                          =If(
+                              !IsBlank(
+                                  LookUp(
+                                      'Bookable Resource Characteristics',
+                                      Resource.'Bookable Resource' = varSelectedResource.'Bookable Resource' &&
+                                      Characteristic.Characteristic = cmbAddSkill.Selected.Characteristic
+                                  )
+                              ),
+                              Notify(varSelectedResource.Name & " already has " & cmbAddSkill.Selected.Name, NotificationType.Warning),
+                              IfError(
+                                  Patch(
+                                      'Bookable Resource Characteristics',
+                                      Defaults('Bookable Resource Characteristics'),
+                                      {
+                                          Name: cmbAddSkill.Selected.Name,
+                                          Resource: varSelectedResource,
+                                          Characteristic: LookUp(Characteristics, Characteristic = cmbAddSkill.Selected.Characteristic),
+                                          'Rating Value': cmbAddProficiency.Selected
+                                      }
+                                  ),
+                                  Notify("Could not add skill: " & FirstError.Message, NotificationType.Error),
+                                  Notify(cmbAddSkill.Selected.Name & " added to " & varSelectedResource.Name, NotificationType.Success);
+                                  Set(varShowAddPanel, false)
+                              )
+                          )
+                  - btnAddCancel:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        Text: ="Cancel"
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Size: =10.5
+                        Width: =96
+                        Height: =32
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Color: =RGBA(36, 36, 36, 1)
+                        HoverFill: =RGBA(245, 245, 245, 1)
+                        HoverColor: =RGBA(36, 36, 36, 1)
+                        PressedFill: =RGBA(224, 224, 224, 1)
+                        BorderColor: =RGBA(209, 209, 209, 1)
+                        HoverBorderColor: =RGBA(199, 199, 199, 1)
+                        BorderThickness: =1
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        OnSelect: =Set(varShowAddPanel, false)

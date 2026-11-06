@@ -1,0 +1,3 @@
+Set(varRatingModel, First(Sort('Rating Models', 'Created On', SortOrder.Ascending)));
+Set(varShowAddPanel, false);
+Set(varRemoveItem, Blank())

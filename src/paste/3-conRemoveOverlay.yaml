@@ -1,0 +1,118 @@
+- conRemoveOverlay:
+    Control: GroupContainer@1.3.0
+    Variant: ManualLayout
+    Properties:
+      Visible: =!IsBlank(varRemoveItem)
+      X: =0
+      Y: =0
+      Width: =Parent.Width
+      Height: =Parent.Height
+      Fill: =RGBA(0, 0, 0, 0.4)
+      DropShadow: =DropShadow.None
+    Children:
+      - conRemoveDialog:
+          Control: GroupContainer@1.3.0
+          Variant: AutoLayout
+          Properties:
+            X: =(Parent.Width - Self.Width) / 2
+            Y: =(Parent.Height - Self.Height) / 2
+            Width: =Min(440, Parent.Width - 32)
+            Height: =212
+            Fill: =RGBA(255, 255, 255, 1)
+            BorderThickness: =0
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            DropShadow: =DropShadow.Bold
+            LayoutDirection: =LayoutDirection.Vertical
+            LayoutAlignItems: =LayoutAlignItems.Stretch
+            LayoutGap: =8
+            PaddingTop: =24
+            PaddingBottom: =24
+            PaddingLeft: =24
+            PaddingRight: =24
+          Children:
+            - lblRemoveTitle:
+                Control: Label@2.5.1
+                Properties:
+                  Text: ="Remove skill"
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Size: =15
+                  Height: =36
+                  PaddingLeft: =0
+                  Color: =RGBA(36, 36, 36, 1)
+            - lblRemoveText:
+                Control: Label@2.5.1
+                Properties:
+                  Text: ="Remove " & varRemoveItem.SkillName & " from " & varSelectedResource.Name & "? This takes effect for new work items routed to this agent."
+                  Font: =Font.'Segoe UI'
+                  Size: =10.5
+                  Height: =56
+                  PaddingLeft: =0
+                  VerticalAlign: =VerticalAlign.Top
+                  Color: =RGBA(36, 36, 36, 1)
+            - conRemoveButtons:
+                Control: GroupContainer@1.3.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  LayoutMinHeight: =40
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutJustifyContent: =LayoutJustifyContent.End
+                  LayoutAlignItems: =LayoutAlignItems.End
+                  LayoutGap: =8
+                  FillPortions: =1
+                Children:
+                  - btnRemoveConfirm:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        Text: ="Remove"
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Size: =10.5
+                        Width: =96
+                        Height: =32
+                        Fill: =RGBA(15, 108, 189, 1)
+                        Color: =RGBA(255, 255, 255, 1)
+                        HoverFill: =RGBA(17, 94, 163, 1)
+                        HoverColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(12, 59, 94, 1)
+                        BorderThickness: =0
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        OnSelect: |-
+                          =IfError(
+                              Remove(
+                                  'Bookable Resource Characteristics',
+                                  LookUp('Bookable Resource Characteristics', 'Bookable Resource Characteristic' = varRemoveItem.'Bookable Resource Characteristic')
+                              ),
+                              Notify("Could not remove skill: " & FirstError.Message, NotificationType.Error),
+                              Notify(varRemoveItem.SkillName & " removed", NotificationType.Success)
+                          );
+                          Set(varRemoveItem, Blank())
+                  - btnRemoveCancel:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        Text: ="Cancel"
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Size: =10.5
+                        Width: =96
+                        Height: =32
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Color: =RGBA(36, 36, 36, 1)
+                        HoverFill: =RGBA(245, 245, 245, 1)
+                        HoverColor: =RGBA(36, 36, 36, 1)
+                        PressedFill: =RGBA(224, 224, 224, 1)
+                        BorderColor: =RGBA(209, 209, 209, 1)
+                        HoverBorderColor: =RGBA(199, 199, 199, 1)
+                        BorderThickness: =1
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        OnSelect: =Set(varRemoveItem, Blank())
