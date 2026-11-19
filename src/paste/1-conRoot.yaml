@@ -484,7 +484,8 @@
                                       Resource.'Bookable Resource' = varSelectedResource.'Bookable Resource'
                                   ),
                                   SkillId, Characteristic.Characteristic,
-                                  SkillName, Characteristic.Name
+                                  SkillName, Characteristic.Name,
+                                  RatingModelId, 'Rating Value'.'Rating Model'.'Rating Model'
                               ),
                               SkillName,
                               SortOrder.Ascending
@@ -515,13 +516,30 @@
                               Width: =Parent.TemplateWidth * 0.5 - 56
                               Height: =32
                               Items: |-
-                                =Sort(
-                                    Filter(
-                                        'Rating Values',
-                                        'Rating Model'.'Rating Model' = Coalesce(ThisItem.'Rating Value'.'Rating Model'.'Rating Model', varRatingModel.'Rating Model')
-                                    ),
-                                    'Value',
-                                    SortOrder.Ascending
+                                =With(
+                                    {
+                                        modelId: Coalesce(
+                                            ThisItem.RatingModelId,
+                                            First(
+                                                Filter(
+                                                    FirstN(
+                                                        Filter(
+                                                            'Bookable Resource Characteristics',
+                                                            Characteristic.Characteristic = ThisItem.SkillId
+                                                        ),
+                                                        500
+                                                    ),
+                                                    !IsBlank('Rating Value')
+                                                )
+                                            ).'Rating Value'.'Rating Model'.'Rating Model',
+                                            varRatingModel.'Rating Model'
+                                        )
+                                    },
+                                    Sort(
+                                        Filter('Rating Values', 'Rating Model'.'Rating Model' = modelId),
+                                        'Value',
+                                        SortOrder.Ascending
+                                    )
                                 )
                               DisplayFields: =["name"]
                               SearchFields: =["name"]
